@@ -1,0 +1,1297 @@
+## Layout BRDE Investimento Sem FINAME - v22.2
+##
+#set( $codigoLinhaCredito = 85)
+#set( $contadorMutuario = 0 )
+#set( $somatoriaPropostas = 0 )
+#set( $linha = 1)
+#set( $seqGarantia = 0)
+#set( $sequenciaGrupo = 0)
+##
+##----------- Registro Header ---------------------------------------------------------------------------------------------------------
+#set ($registro_0 = "0")
+#if($lote.propostas)
+#**##set ($registro_0 = $registro_0 + $cnpjCentral)
+#else
+#**##set ($registro_0 = $registro_0 + ${formatador.preencherComZero(0, 14)})
+#end
+#set ($registro_0 = $registro_0 + ${formatador.preencherComEspaco(null, 12)})
+#set ($registro_0 = $registro_0 + ${formatador.preencherComData($lote.dataEmissao, "yyyyMMdd")})
+## Verificar a versão do layout
+#set ($registro_0 = $registro_0 + "2220")
+#set ($registro_0 = $registro_0 + ${formatador.preencherComEspaco(null, 4)})
+#set ($registro_0 = $registro_0 + ${formatador.preencherComEspaco("R", 1)})
+#set ($registro_0 = $registro_0 + ${formatador.preencherComEspaco(null, 551)})
+#set ($registro_0 = $registro_0 + ${formatador.preencherComZero($linha, 5)})
+## Imprime o registro zero
+$registro_0
+## Percorre lista de propostas do lote
+#foreach( $proposta in $lote.propostas )
+#**###---- Registro F e I - Inicializa Variaveis
+#**##set( $DatValITR = "")
+#**##set( $DataValidadeITR = "")
+#**##set( $IndEquNoUs = 0)
+#**##set( $IndEquNaIm = 0)
+#**###---- Garantias - Inicializa Variaveis
+#**##set ( $GaTipoLogradouro = 44)
+#**##set ( $GaLogradouro = "")
+#**##set ( $GaNumero = 0)
+#**##set ( $GaComplemento = "")
+#**##set ( $GaBairro = "")
+#**##set ( $GaCEP = 0)
+#**##set ( $GaEquipFinanciado = "")
+#**##set ( $GaEquipNovoUsado = "")
+#**###
+#**###
+#**### Trata agrupamento de mutuarios coletivos
+#**##if ( $proposta.mutuarios.size() > 1)
+#**##**##set( $sequenciaGrupo = $sequenciaGrupo + 1)
+#**##end
+#**###
+#**###----------- Registro Tipo 1 ---------------------------------------------------------------------------------------------------------
+#**### Percorre lista de mutuarios da proposta
+#**##foreach($mutuario in $proposta.mutuarios)
+#**##**##set( $linha = $linha + 1)
+#**##**##set( $registro_1 = "1")
+#**##**###--- Valores campos adicionais de mutuário para o Registro Tipo 1
+#**##**##foreach( $valorCampoAdicional in $mutuario.valoresCamposAdicionais)
+#**##**##**###------ 'Data fundação do Proponente'
+#**##**##**##if ( $valorCampoAdicional.campoAdicional.idBndesBrde == 101)
+#**##**##**##**##set( $MutDataFundacaoEmpresa = $valorCampoAdicional.valorData)
+#**##**##**##**###----- 'Gênero do Proponente - Pessoa Física'
+#**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 105)
+#**##**##**##**##set( $MutGeneroProponentePessoaFisica = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**###----- 'Gênero do Proponente - Pessoa Jurídica'
+#**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 104)
+#**##**##**##**##set( $MutGeneroProponentePessoaJuridica = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**###----- 'Natureza Jurídica da Empresa'
+#**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 102)
+#**##**##**##**##set( $MutNaturezaJuridicaEmpresa = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**###----- 'Indicador de Opção pelo SIMPLES'
+#**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 103)
+#**##**##**##**##set( $MutIndOpcaoPeloSimples = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**###----- 'Capital Social controlado majoritariamente por sócia(s) mulher(es)?'
+#**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 106)
+#**##**##**##**##set( $MutCapitalSocialMulheres = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##end
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + $cnpjCentral)
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($proposta.cooperativa.codigoAgenciaBNDES, 6)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.nome, 30)})
+#**##**### Verifica tipo de pessoa
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(1, 1)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(2, 1)})
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComData($mutuario.validadeCND, "yyyyMMdd")})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(null, 6)})
+#**##**###--------- Verifica se cooperado possui data de nascimento
+#**##**##if ($mutuario.contaCooperado.cooperado.dataNascimento)
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComData($mutuario.contaCooperado.cooperado.dataNascimento, "yyyyMMdd")})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComData($MutDataFundacaoEmpresa, "yyyyMMdd")})
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.rendaBrutaAnual, 17)})
+#**##**###---- Data Renda Bruta Anual - Usa como base para calculo a data de emissao do contrato.
+#**##**##set ( $dtRemissao = 0)
+#**##**##set ( $dtRemissao = $dtRemissao.valueOf(${formatador.preencherComData($proposta.dataEmissao, "yyyy")}))
+#**##**##set ( $dtRemissao = $dtRemissao - 1 )
+#**##**##set ( $dtRemissao = $dtRemissao + "1231")
+#**##**##set ( $registro_1 = $registro_1 + $dtRemissao)
+#**##**##set( $registro_1 = $registro_1 + "E")
+#**##**###
+#**##**###Indicador de Pessoa Politicamente Exposta
+#**##**##if ($mutuario.pessoaPoliticamenteExposta == 'SIM')
+#**##**##**##set ( $registro_1 = $registro_1 + "S")
+#**##**##else
+#**##**##**##set ( $registro_1 = $registro_1 + "N")
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 14)})
+#**##**###----- União Estável + Estado civil
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.indicadorUniaoEstavelBRDE,1)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.estadoCivilBRDE, 2)})
+#**##**### Verifica se cooperado e fisico ou juridico
+#**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##set( $registro_1 = $registro_1 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##end
+#**##**###----- Estado Civil - Regime de Bens
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.regimeBensBRDE,2)})
+#**##**###
+#**##**##if ($mutuario.genero == 1)
+#**##**##**##set( $registro_1 = $registro_1 + 'M')
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + 'F')
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpfConjuge.replace(".","").replace("-",""), 11)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(null, 24)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(null, 3)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 17)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 2)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 35)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(0,8)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.endereco.cidade.codigoIbge, 7)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 25)})
+#**##**### DDD do Proponente
+#**##**##set( $registro_1 = $registro_1 + ${helper.getDdd($telefoneCentral)})
+#**##**### Telefone do Proponente
+#**##**##set( $registro_1 = $registro_1 + ${helper.getTelefoneSemDdd($telefoneCentral)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 3)})
+#**##**###----- Genero do Proponente
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($MutGeneroProponentePessoaFisica.substring(0, 3), 3)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($MutGeneroProponentePessoaJuridica.substring(0, 3), 3)})
+#**##**##end
+#**##**###
+#**##**###----- Porte de Renda
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##if ($mutuario.rendaBrutaAnual <= 500000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(12, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 2400000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(13, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual > 2400000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(14, 2)})
+#**##**##**##else
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(17, 2)})
+#**##**##**##end
+#**##**##else
+#**##**##**##if ($mutuario.rendaBrutaAnual <= 360000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(41, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 3600000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(42, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 4800000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(43, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 16000000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(44, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 90000000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(45, 2)})
+#**##**##**##elseif ($mutuario.rendaBrutaAnual <= 300000000)
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(46, 2)})
+#**##**##**##else
+#**##**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(47, 2)})
+#**##**##**##end
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.cnae.substring(1), 7)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(0, 3)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 6)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 15)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(null, 8)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 1)})
+#**##**###
+#**##**###---- Endereço
+#**##**##set( $registro_1 = $registro_1 + "44")
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.endereco.logradouro, 60).toUpperCase()})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null,4)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.endereco.numero, 6)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.endereco.complemento, 20).toUpperCase()})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.endereco.bairro, 16).toUpperCase()})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.endereco.cep.replace("-",""), 8)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 19)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(0,4)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($mutuario.etnia, 1)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($emailCentral, 50).toUpperCase()})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(0,6)})
+#**##**###---- Natureza Juridica da Empresa
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 5)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($MutNaturezaJuridicaEmpresa.substring(0,5), 5)})
+#**##**##end
+#**##**###---- Indicador de opção pelo Simples
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($MutIndOpcaoPeloSimples.substring(0, 1).toUpperCase(), 1)})
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco('S',1)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco('N',1)})
+#**##**###--- Sociedade Controlada por Fundo de Private Equity
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero('N', 1)})
+#**##**##end
+#**##**###--- Controle de Capital da Empresa - Fixo N = Controle Nacional
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero('N', 1)})
+#**##**##end
+#**##**### CRNTRC - Certificado de registro nacional de transportadores rodoviários de carga emitido pela ANTT (Agência Nacional de Transportes Terrestres).
+#**##**##if ($proposta.modelo.leiauteLinhaCredito.mutuarioRntrc)
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($mutuario.rntrc, 17)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero(0, 17)})
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 29)})
+#**##**### Capital Social controlado majoritariamente por sócia(s) mulher(es)? (S/N)
+#**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##else
+#**##**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco($MutCapitalSocialMulheres.substring(0, 1), 1)})
+#**##**##end
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComEspaco(null, 16)})
+#**##**##set( $registro_1 = $registro_1 + ${formatador.preencherComZero($linha, 5)})
+#**##**### Imprime o registro 1
+#**##**#$registro_1
+#**##**### Adiciona mutuario
+#**##**##set($contadorMutuario = $contadorMutuario + 1)
+#**##**###
+#**##**###----------- Registro Tipo 2 ---------------------------------------------------------------------------------------------------------
+#**##**##if ($proposta.modelo.leiauteLinhaCredito.linhaCredito.classificacao == "PRONAF")
+#**##**##**##set( $linha = $linha + 1)
+#**##**##**##set( $registro_2 = "2")
+#**##**##**##set( $registro_2 = $registro_2 + $cnpjCentral)
+#**##**##**### Verifica tipo de pessoa
+#**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##set( $registro_2 = $registro_2 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##else
+#**##**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##end
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco(null, 56)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComZero(611005, 6)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco($mutuario.genero, 1)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComZero(0, 1)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco($mutuario.grauInstrucao, 1)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco($mutuario.contaCooperado.cooperado.nomeMae, 30).toUpperCase()})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComZero($mutuario.pisPasep, 11)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco($mutuario.dap, 25)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComData($mutuario.validadeDAP, "yyyyMMdd")})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco($mutuario.ufDap, 2).toUpperCase()})
+#**##**##**##set( $registro_2 = $registro_2 + 'N')
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComEspaco(null, 424)})
+#**##**##**##set( $registro_2 = $registro_2 + ${formatador.preencherComZero($linha, 5)})
+#**##**##**### Imprime o registro 2
+#**##**##**#$registro_2
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo 3 ---------------------------------------------------------------------------------------------------------
+#**##**##if ($proposta.bens.size() > 0)
+#**##**##**##set( $seqGarantia = 0 )
+#**##**##**##foreach($bem in $proposta.bens)
+#**##**##**##**##set( $seqGarantia = $seqGarantia + 1)
+#**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##set( $registro_3 = "3")
+#**##**##**##**##set( $registro_3 = $registro_3 + $cnpjCentral)
+#**##**##**##**###--- Garantias
+#**##**##**##**##foreach( $valorCampoAdicional in $bem.valoresCamposAdicionais)
+#**##**##**##**##**###------ 'Logradouro'
+#**##**##**##**##**##if ( $valorCampoAdicional.campoAdicional.idBndesBrde == 301)
+#**##**##**##**##**##**##set( $GaLogradouro = $valorCampoAdicional.valorTexto)
+#**##**##**##**##**##**###------ 'Número'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 302)
+#**##**##**##**##**##**##set( $GaNumero = $valorCampoAdicional.valorInteiro)
+#**##**##**##**##**##**###------ 'Complemento'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 303)
+#**##**##**##**##**##**##set( $GaComplemento = $valorCampoAdicional.valorTexto)
+#**##**##**##**##**##**###------ 'Bairro'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 304)
+#**##**##**##**##**##**##set( $GaBairro = $valorCampoAdicional.valorTexto)
+#**##**##**##**##**##**###------ 'CEP'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 305)
+#**##**##**##**##**##**##set( $GaCEP = ${valorCampoAdicional.valorTexto.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##**##**###------ 'Equip. Financiado'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 306)
+#**##**##**##**##**##**##set( $GaEquipFinanciado = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**##**##**###------ 'Equip. Novo/Usado'
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 25)
+#**##**##**##**##**##**##set( $GaEquipNovoUsado = $valorCampoAdicional.itemSelecao.nome)
+#**##**##**##**##**##end
+#**##**##**##**##end
+#**##**##**##**### Verifica tipo de pessoa
+#**##**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##**##end
+#**##**##**##**###------ Sequencial Detalhe Garantias -----------
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($seqGarantia, 5)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 29)})
+#**##**##**##**###------Validacao do Grau das Hipotecas ---------
+#**##**##**##**##if ($bem.garantia.codigoBacen == 564 && $bem.garantia.codigoColmeia == 1019)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(1, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 564 && $bem.garantia.codigoColmeia == 1035)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(1, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1023)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(2, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1034)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(2, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1030)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(3, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1036)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(3, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1033)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(4, 3)})
+#**##**##**##**##elseif ($bem.garantia.codigoBacen == 562 && $bem.garantia.codigoColmeia == 1032)
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(5, 3)})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(0, 3)})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($bem.garantiaColmeia.valorAvaliacaoBem, 17)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($bem.garantia.codigoBacen, 4)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($bem.descricao, 60).toUpperCase()})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 17)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 5)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($bem.garantiaColmeia.numeroMatriculaRegImovel.replace(".","").replace("-",""),7)})
+#**##**##**##**###
+#**##**##**##**###-----------Area do Imovel --- Tratamento da informação para Registro correto -------
+#**##**##**##**###   O Padrão BRDE é metros quadrados
+#**##**##**##**###----------Formatacao do valor de Metro Quadrados conforme formato BRDE ----------------
+#**##**##**##**##if ($bem.garantiaColmeia.areaImovel)
+#**##**##**##**##**##if ($bem.garantiaColmeia.unidadeImovel == 11)
+#**##**##**##**##**##**##set( $areaM2 = $bem.garantiaColmeia.areaImovel.toString())
+#**##**##**##**##**##**##set( $thStr = $areaM2.indexOf("."))
+#**##**##**##**##**##**##set( $thArea = $areaM2.length())
+#**##**##**##**##**##**##set( $thPd = $thArea - $thStr)
+#**##**##**##**##**##**##if( $thPd <= 2)
+#**##**##**##**##**##**##**##set( $areaIm = $areaM2 + "0")
+#**##**##**##**##**##**##elseif( $thPd == 3)
+#**##**##**##**##**##**##**##set( $areaIm = $areaM2)
+#**##**##**##**##**##**##elseif( $thPd > 3)
+#**##**##**##**##**##**##**##set( $thVlr = $thArea - 1)
+#**##**##**##**##**##**##**##set( $areaIm = $areaM2.substring(0,$thVlr))
+#**##**##**##**##**##**##end
+#**##**##**##**##**##**###-----------Transformacao de Hectares para Metros Quadrados + Formatacao BRDE ----------
+#**##**##**##**##**##elseif ($bem.garantiaColmeia.unidadeImovel == 9)
+#**##**##**##**##**##**##set( $areaHa = $bem.garantiaColmeia.areaImovel)
+#**##**##**##**##**##**##set( $area = $areaHa * 10000)
+#**##**##**##**##**##**##set( $areaStr = $area.toString())
+#**##**##**##**##**##**##set( $thStr = $areaStr.indexOf("."))
+#**##**##**##**##**##**##set( $thArea = $areaStr.length())
+#**##**##**##**##**##**##set( $th = $thArea - $thStr)
+#**##**##**##**##**##**##if( $th <= 2)
+#**##**##**##**##**##**##**##set( $thArea = $thStr + 2)
+#**##**##**##**##**##**##**##set( $areaIm = $areaStr.substring(0,$thArea))
+#**##**##**##**##**##**##**##set( $areaIm = $areaIm + "0")
+#**##**##**##**##**##**##elseif( $th >= 3)
+#**##**##**##**##**##**##**##set( $thArea = $thStr + 3)
+#**##**##**##**##**##**##**##set( $areaIm = $areaStr.substring(0,$thArea))
+#**##**##**##**##**##**##end
+#**##**##**##**##**##**###---------Transformacao de Are para Metro Quadrado + Formatacao BRDE ------------------------
+#**##**##**##**##**##elseif ($bem.garantiaColmeia.unidadeImovel == 10)
+#**##**##**##**##**##**##set( $areaAr = $bem.garantiaColmeia.areaImovel)
+#**##**##**##**##**##**##set( $areaAr = $areaAr * 100)
+#**##**##**##**##**##**##set( $areaStr = $areaAr.toString())
+#**##**##**##**##**##**##set( $thStr = $areaStr.indexOf("."))
+#**##**##**##**##**##**##set( $thArea = $areaStr.length())
+#**##**##**##**##**##**##set( $th = $thArea - $thStr)
+#**##**##**##**##**##**##if( $th <= 2)
+#**##**##**##**##**##**##**##set( $thArea = $thStr + 2)
+#**##**##**##**##**##**##**##set( $areaIm = $areaStr.substring(0,$thArea))
+#**##**##**##**##**##**##**##set( $areaIm = $areaIm + "0")
+#**##**##**##**##**##**##elseif( $th >= 3)
+#**##**##**##**##**##**##**##set( $thArea = $thStr + 3)
+#**##**##**##**##**##**##**##set( $areaIm = $areaStr.substring(0,$thArea))
+#**##**##**##**##**##**##end
+#**##**##**##**##**##end
+#**##**##**##**##end
+#**##**##**##**###
+#**##**##**##**##set( $areaIm = $areaIm.replace(".",""))
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($areaIm,17)})
+#**##**##**##**##set( $areaIm = "")
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null,7)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 1)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($bem.valor, 17)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 17)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 14)})
+#**##**##**##**###------ Endereco do Bem
+#**##**##**##**###--------------------- Tipo de Logradouro
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($GaTipoLogradouro, 2)})
+#**##**##**##**###--------------------- Logradouro
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaLogradouro, 60).toUpperCase()})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 4)})
+#**##**##**##**###--------------------- Numero
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaNumero, 6)})
+#**##**##**##**###--------------------- Complemento
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaComplemento, 20).toUpperCase()})
+#**##**##**##**###--------------------- Bairro
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaBairro, 16).toUpperCase()})
+#**##**##**##**###--------------------- CEP
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($GaCEP, 8)})
+#**##**##**##**###--------------------- Caixa Postal
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 6)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Data de Validade do ITR
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 8)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Indicador de Equipamento Financiado
+#**##**##**##**##if ( $GaEquipFinanciado && $GaEquipFinanciado != "")
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaEquipFinanciado.substring(0,1), 1).toUpperCase()})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_3 = $registro_3 + " ")
+#**##**##**##**##end
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 4)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Codigo CFI do Equipamento (Finame)
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 10)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Valor Unitario do Item
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 13)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Quantidade do Item
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 10)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Numero de Serie do Equipamento/Chassi
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 60)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Indicador de Equipamento Novo ou Usado
+#**##**##**##**##if ( $GaEquipNovoUsado && $GaEquipNovoUsado != "")
+#**##**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco($GaEquipNovoUsado.substring(0,1), 1)})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_3 = $registro_3 + " ")
+#**##**##**##**##end
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Numero Nota Fiscal/Patrimonio
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 15)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Data Nota Fiscal
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 8)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 6)})
+#**##**##**##**###--------------------- Cartorio
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero(null, 5)})
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComEspaco(null, 73)})
+#**##**##**##**###
+#**##**##**##**##set( $registro_3 = $registro_3 + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**### Imprime o registro 3
+#**##**##**##**#$registro_3
+#**##**##**##end
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo 4 ---------------------------------------------------------------------------------------------------------
+#**##**###-------- Inserção da cooperativa como aval da operação - Inserção Fixa (GIPS 20335) -----------------
+#**##**##set( $linha = $linha + 1)
+#**##**##set( $registro_4C = "4")
+#**##**##set( $registro_4C = $registro_4C + $cnpjCentral)
+#**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##set( $registro_4C = $registro_4C + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##else
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##end
+#**##**###-------- Verifica se a cooperativa é Singular - Insere dados da Singular --------
+#**##**##if ($proposta.cooperativa.grupoEmpresa.codigo == 3)
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.nome,35).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco("M", 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 10)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco('J', 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.cnpj.replace(".","").replace("-","").replace("/",""),14)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 2)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 2)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 34)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.endereco.cep.replace("-",""),8)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,31)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.contato.telefone.replace("(","").replace(")","0").replace("-",""), 11)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,1)})
+#**##**##**###
+#**##**##**###---------- Validação para inserção de Logradouro -------------------------
+#**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.endereco.logradouro, 3).toUpperCase()})
+#**##**##**##if ($logradouro == "RUA")
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.endereco.logradouro.replace("Rua ",""),60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "32")
+#**##**##**##elseif( $logradouro == "AVE")
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.endereco.logradouro.replace("Avenida ",""),60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "04")
+#**##**##**##else
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.endereco.logradouro, 60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "44")
+#**##**##**##end
+#**##**##**##set( $logradouro = $tiplogr + $logradouro)
+#**##**##**##set( $registro_4C = $registro_4C + $logradouro)
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,4)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.endereco.numero,6)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.endereco.complemento,20).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.endereco.bairro,16).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 6)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 5)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(null, 11)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 282)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($linha, 5)})
+#**##**##**###
+#**##**##**###-------- Verifica se a cooperativa é Posto de Atendimento - Insere dados do Posto de Atendimento --------
+#**##**##elseif ($proposta.cooperativa.grupoEmpresa.codigo == 4)
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.nome,35).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco("M", 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 10)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco('J', 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.empresaResponsavel.cnpj.replace(".","").replace("-","").replace("/",""),14)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 2)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 2)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 34)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.empresaResponsavel.endereco.cep.replace("-",""),8)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,31)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,1)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.empresaResponsavel.contato.telefone.replace("(","").replace(")","0").replace("-",""), 11)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,1)})
+#**##**##**###
+#**##**##**###---------- Validação para inserção de Logradouro -------------------------
+#**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.logradouro, 3).toUpperCase()})
+#**##**##**##if ($logradouro == "RUA")
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.logradouro.replace("Rua ",""),60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "32")
+#**##**##**##elseif( $logradouro == "AVE")
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.logradouro.replace("Avenida ",""),60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "04")
+#**##**##**##else
+#**##**##**##**##set( $logradouro = ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.logradouro, 60).toUpperCase()})
+#**##**##**##**##set( $tiplogr = "44")
+#**##**##**##end
+#**##**##**##set( $logradouro = $tiplogr + $logradouro)
+#**##**##**##set( $registro_4C = $registro_4C + $logradouro)
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null,4)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($proposta.cooperativa.empresaResponsavel.endereco.numero,6)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.complemento,20).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco($proposta.cooperativa.empresaResponsavel.endereco.bairro,16).toUpperCase()})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(0, 6)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 5)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero(null, 11)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComEspaco(null, 282)})
+#**##**##**##set( $registro_4C = $registro_4C + ${formatador.preencherComZero($linha, 5)})
+#**##**##end
+#**##**###---Imprime Registro Tipo 4 - Cooperativa Avalista -----
+#**##**#$registro_4C
+#**##**###
+#**##**###-------- Inserção dos avais da operação --------------------------------
+#**##**##foreach($avalista in $proposta.avalistas)
+#**##**##**##set( $avalista_cpf_cnpj = "")
+#**##**##**##if ($avalista.cpf)
+#**##**##**##**##set( $avalista_cpf_cnpj = ${formatador.preencherComZero($avalista.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##else
+#**##**##**##**##set( $avalista_cpf_cnpj = ${formatador.preencherComEspaco($avalista.cnpj.replace(".","").replace("-","").replace("/",""), 14)})
+#**##**##**##end
+#**##**##**##set( $mutuario_cpf_cnpj = "")
+#**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##set( $mutuario_cpf_cnpj = ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##else
+#**##**##**##**##set( $mutuario_cpf_cnpj = ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##end
+#**##**##**##if($avalista_cpf_cnpj != $mutuario_cpf_cnpj)
+#**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##set( $registro_4 = "4")
+#**##**##**##**##set( $registro_4 = $registro_4 + $cnpjCentral)
+#**##**##**##**##set( $registro_4 = $registro_4 + ${mutuario_cpf_cnpj})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.nome, 35).toUpperCase()})
+#**##**##**##**##if ($avalista.cpf)
+#**##**##**##**##**##if ($avalista.sexo)
+#**##**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.sexo, 1)})
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco('M', 1)})
+#**##**##**##**##**##end
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null,1)})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero(0,10)})
+#**##**##**##**###--------  Indicador de Uniao Estavel
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.indicadorUniaoEstavelBRDE,1)})
+#**##**##**##**###
+#**##**##**##**##if ($avalista.cpf)
+#**##**##**##**##**##set( $registro_4 = $registro_4 + "F")
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_4 = $registro_4 + "J")
+#**##**##**##**##end
+#**##**##**##**##set( $registro_4 = $registro_4 + ${avalista_cpf_cnpj})
+#**##**##**##**###
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($avalista.estadoCivilBRDE, 2)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($avalista.regimeBensBRDE,2)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 35)})
+#**##**##**##**###---- Endereco Avalista
+#**##**##**##**##if ($avalista.endereco.cep)
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($avalista.endereco.cep.replace("-",""), 8)})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero(0, 8)})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 31)})
+#**##**##**##**###---- Indicador de Pessoa Politicamente Exposta
+#**##**##**##**##if ($avalista.pessoaPoliticamenteExposta == 'SIM')
+#**##**##**##**##**##set ( $registro_4 = $registro_4 + "S")
+#**##**##**##**##else
+#**##**##**##**##**##set ( $registro_4 = $registro_4 + "N")
+#**##**##**##**##end
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero(null, 2)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero(null, 9)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###---- Endereco Avalista
+#**##**##**##**##if ($avalista.endereco)
+#**##**##**##**##**##set( $registro_4 = $registro_4 + "44")
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.endereco.logradouro, 60).toUpperCase()})
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 4)})
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($avalista.endereco.numero, 6)})
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.endereco.complemento, 20).toUpperCase()})
+#**##**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco($avalista.endereco.bairro, 16).toUpperCase()})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero(0, 6)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 5)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($avalista.cpfConjuge.replace(".","").replace("-",""), 11)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComData($avalista.obterDataNascimento(), "yyyyMMdd")})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComEspaco(null, 274)})
+#**##**##**##**##set( $registro_4 = $registro_4 + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**### Imprime o registro 4
+#**##**##**##**#$registro_4
+#**##**##**##end
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo 5 ---------------------------------------------------------------------------------------------------------
+#**##**##set( $linha = $linha + 1)
+#**##**##set( $percentualPgPAF = $proposta.percentualPgPAF * 100)
+#**##**##set( $registro_5 = "5")
+#**##**##set( $registro_5 = $registro_5 + $cnpjCentral)
+#**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##set( $registro_5 = $registro_5 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 2)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($lote.dataEmissao, "yyyyMMdd")})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.modelo.leiauteLinhaCredito.linhaCredito.codigoPrograma, 3)})
+#**##**##if($proposta.periodicidadeEmMeses == 1)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("M", 1)})
+#**##**##elseif($proposta.periodicidadeEmMeses == 3)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("T", 1)})
+#**##**##elseif($proposta.periodicidadeEmMeses == 6)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("S", 1)})
+#**##**##elseif($proposta.periodicidadeEmMeses == 12)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("A", 1)})
+#**##**##end
+#**##**###-------------- Valida Carencia - Data Fim de Carencia --------------------------------
+#**##**##set( $dataFimCarencia = $helper.getDataFimCarencia($proposta))
+#**##**##if($proposta.modelo.leiauteLinhaCredito.permiteCarenciaComJuros)
+#**##**##**##if($proposta.dataFimCarencia == $proposta.dataInicioCarencia)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null,8)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.dataFimCarencia, "yyyyMMdd")})
+#**##**##**##end
+#**##**##else
+#**##**###-------------- Valida Carencia - Com a Linha Sem Parametrizacao --------------------
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($dataFimCarencia, 8)})
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.dataPrimeiraParcela, "yyyyMMdd")})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.dataUltimaParcela, "yyyyMMdd")})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.cidade.codigoIbge, 7)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.cidade.codigoBacen, 6)})
+#**##**##if($proposta.mutuarios.size() > 1)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($mutuario.valor, 17)})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.valorEmprestimo, 17)})
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.modelo.leiauteLinhaCredito.linhaCredito.codigoPrograma, 5)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).areaHectares, 6)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).qtde, 11)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosproposta.get(0).previsaoProducao, 11)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 4)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##if($proposta.mutuarios.size() > 1)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("C", 1)})
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.codigo, 14)})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("I", 1)})
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 14)})
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 3)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 6)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 15)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 14)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 35)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.codigo, 20)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 5)})
+#**##**###
+#**##**###-------------- 'Indicador de cobrança de juros na carência (S /N /A)' ------
+#**##**##if($proposta.modelo.leiauteLinhaCredito.permiteCarenciaComJuros)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("S", 1)})
+#**##**##else
+#**##**##**##set($registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##end
+#**##**###
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 10)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 2)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.taxaEmprestimo, 4)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 2)})
+#**##**###------ Linha Diferente de Pronaf não é necessário enviar PGPAF
+#**##**##if($proposta.modelo.leiauteLinhaCredito.linhaCredito.classificacao == "PRONAF" && $mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoPessoaEntity"))
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.pgPAF, 5)})
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($percentualPgPAF,5)})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 5)})
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null,5)})
+#**##**##end
+#**##**##if($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "LICENCA_CONCEDIDA")
+#**##**##**##set( $registro_5 = $registro_5 + "1")
+#**##**##elseif($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "LICENCA_DISPENSADA")
+#**##**##**##set( $registro_5 = $registro_5 + "2")
+#**##**##elseif($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "SEM_LICENCA")
+#**##**##**##set( $registro_5 = $registro_5 + "3")
+#**##**##elseif($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "FINANCIAMENTO_ITENS_DIVERSOS")
+#**##**##**##set( $registro_5 = $registro_5 + "3")
+#**##**##elseif($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "LICENCA_DISPENSADA_GENERICA")
+#**##**##**##set( $registro_5 = $registro_5 + "4")
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##end
+#**##**###------------- Numero de Licenca - Remove Letras do Numero --------------------------------------------
+#**##**###------- Para licenca = 4-Dispensa Generia nao deve ir informacoes
+#**##**##set( $TipoLicenca = $proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString())
+#**##**##if($TipoLicenca != "SEM_LICENCA" || $TipoLicenca != "FINANCIAMENTO_ITENS_DIVERSOS")
+#**##**##**##if($proposta.empreendimentosProposta.get(0).numeroLicenca)
+#**##**##**##**##set( $NrLicenca =  $proposta.empreendimentosProposta.get(0).numeroLicenca.replaceAll("\D",""))
+#**##**##**##**##if($NrLicenca.equals(""))
+#**##**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 15)})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($NrLicenca, 15)})
+#**##**##**##**##end
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).numeroLicenca, 15)})
+#**##**##**##end
+#**##**##**###-------------------------------------------------------------------------------------------------------
+#**##**##**##if($TipoLicenca == "LICENCA_DISPENSADA_GENERICA")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).tipoLicencaConcedida.toString(), 2)})
+#**##**##**##end
+#**##**##**##if($proposta.empreendimentosProposta.get(0).dataEmissaoLicenca)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.empreendimentosProposta.get(0).dataEmissaoLicenca, "yyyyMMdd")})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 8)})
+#**##**##**##end
+#**##**##**##if($TipoLicenca == "LICENCA_DISPENSADA_GENERICA")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##**##else
+#**##**##**##**##if($proposta.empreendimentosProposta.get(0).dataFimVigenciaLicenca)
+#**##**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.empreendimentosProposta.get(0).dataFimVigenciaLicenca, "yyyyMMdd")})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##**##**##end
+#**##**##**##end
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).orgaoConcedenteLicenca, 50).toUpperCase()})
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).estadoOrgaoConcedenteLicenca.sigla, 2)})
+#**##**##**##if($proposta.empreendimentosProposta.get(0).tipoLicenca.tipoLicenca.toString() == "FINANCIAMENTO_ITENS_DIVERSOS")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 100)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).finalidadeConcessaoLicenca, 100).toUpperCase()})
+#**##**##**##end
+#**##**##else
+#**##**##**###---- Numero Licenca
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 15)})
+#**##**##**###---- Tipo de Licenca Concedido
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**###---- Data de Emissão
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##**###---- Data Fim Vigencia
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 8)})
+#**##**##**###---- Orgao Concedeu Licenca
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 50)})
+#**##**##**###---- UF Orgao Licenca
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**###---- Finalidade Licenca
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 100)})
+#**##**##end
+#**##**###---- Remuneração do Agente
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 4)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 6)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).cnae.codigoCnae, 7)})
+#**##**##set( $registro_5 = $registro_5 + "CCB")
+#**##**##if($proposta.modelo.leiauteLinhaCredito.gerarRecor != "NAO")
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).empreendimento.getComposicaoEmpreendimento(), 14)})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 14)})
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 14)})
+#**##**###
+#**##**###-------------- Valida Carencia - Verifica a periodicidade dos Juros -----------
+#**##**##if($proposta.modelo.leiauteLinhaCredito.permiteCarenciaComJuros)
+#**##**##**##if($proposta.dataFimCarencia == $proposta.dataInicioCarencia)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##**##elseif($proposta.modelo.leiauteLinhaCredito.periodicidadeCarencia == "MENSAL")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("M", 1)})
+#**##**##**##elseif($proposta.modelo.leiauteLinhaCredito.periodicidadeCarencia == "TRIMESTRAL")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("T", 1)})
+#**##**##**##elseif($proposta.modelo.leiauteLinhaCredito.periodicidadeCarencia == "SEMESTRAL")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("S", 1)})
+#**##**##**##elseif($proposta.modelo.leiauteLinhaCredito.periodicidadeCarencia == "ANUAL")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("A", 1)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##**##end
+#**##**##**###------- Valida a Periodicidade da Carencia -------------------------------------
+#**##**##else
+#**##**##**##if($dataFimCarencia == "")
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##**##elseif($proposta.periodicidadeEmMeses == 1)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("M", 1)})
+#**##**##**##elseif($proposta.periodicidadeEmMeses == 3)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("T", 1)})
+#**##**##**##elseif($proposta.periodicidadeEmMeses == 6)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("S", 1)})
+#**##**##**##elseif($proposta.periodicidadeEmMeses == 12)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("A", 1)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##**##end
+#**##**##end
+#**##**###
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 5)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 3)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 5)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(null, 5)})
+#**##**###---------- Nível de Participação ---------
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($proposta.getPercentualIndiceParticipacao(), 5)})
+#**##**###---------- Data do Protocolo da Operação -------
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.getDataSolicitacaoNoAgenteFinanceiro(), "yyyyMMdd")})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null, 1)})
+#**##**###
+#**##**###-------------- Valida Carencia - Data Fim -----------
+#**##**##if($proposta.modelo.leiauteLinhaCredito.permiteCarenciaComJuros)
+#**##**##**##if($proposta.dataFimCarencia == $proposta.dataInicioCarencia)
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null,8)})
+#**##**##**##else
+#**##**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComData($proposta.dataInicioCarencia, "yyyyMMdd")})
+#**##**##**##end
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco(null,8)})
+#**##**##end
+#**##**###
+#**##**##if ($proposta.qtdeParcela > 1)
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("N", 1)})
+#**##**##else
+#**##**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComEspaco("S", 1)})
+#**##**##end
+#**##**###------------- Tipo de Beneficiário/Proponente
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero(1, 3)})
+#**##**##set( $regAntes = 1 )
+#**##**##if($mutuario.empregosRegsAntesInvestimento)
+#**##**##**##if($mutuario.empregosRegsAntesInvestimento > 0)
+#**##**##**##**##set( $regAntes = $mutuario.empregosRegsAntesInvestimento)
+#**##**##**##end
+#**##**##end
+#**##**##if($mutuario.pessoasNaPropriedade > $regAntes)
+#**##**##**##set( $regAntes = $mutuario.pessoasNaPropriedade)
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($regAntes, 5)})
+#**##**##set( $regApos = 1 )
+#**##**##set( $regAposIndireto = 1 )
+#**##**##if($mutuario.empregosRegsAposInvestimento)
+#**##**##**##if($mutuario.empregosRegsAposInvestimento > 0)
+#**##**##**##**##set( $regApos = $mutuario.empregosRegsAposInvestimento)
+#**##**##**##**##set( $regAposIndireto = $mutuario.empregosRegsAposInvestimento)
+#**##**##**##end
+#**##**##end
+#**##**##if($mutuario.pessoasNaPropriedade > $regApos)
+#**##**##**##set( $regApos = $mutuario.pessoasNaPropriedade)
+#**##**##end
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($regApos, 5)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($regAposIndireto, 9)})
+#**##**##set( $registro_5 = $registro_5 + ${formatador.preencherComZero($linha, 5)})
+#**##**### Imprime o registro 5
+#**##**#$registro_5
+#**##**###
+#**##**###----------- Registro Tipo 6 ---------------------------------------------------------------------------------------------------------
+#**##**##if ($proposta.modelo.leiauteLinhaCredito.linhaCredito.classificacao == "PRONAF")
+#**##**##**##set( $linha = $linha + 1)
+#**##**##**##set( $registro_6 = "6")
+#**##**##**##set( $registro_6 = $registro_6 + $cnpjCentral)
+#**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##set( $registro_6 = $registro_6 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##else
+#**##**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##end
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0,2)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComEspaco(null, 55)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComEspaco(null, 6)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComEspaco(null, 12)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComEspaco(null, 16)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0, 6)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0, 2)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0, 5)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0, 5)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero(0, 5)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero($mutuario.pessoasNaPropriedade, 3)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComEspaco(null, 449)})
+#**##**##**##set( $registro_6 = $registro_6 + ${formatador.preencherComZero($linha, 5)})
+#**##**##**### Imprime o registro 6
+#**##**##**#$registro_6
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo 7 ---------------------------------------------------------------------------------------------------------
+#**##**##if ($proposta.modelo.leiauteLinhaCredito.linhaCredito.tipo == "CRESOL_CAP")
+#**##**##**##set($linha = $linha + 1)
+#**##**##**##set($registro_7 = "7")
+#**##**##**##set($registro_7 = $registro_7 + $cnpjCentral)
+#**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##set( $registro_7 = $registro_7 + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##else
+#**##**##**##**##set( $registro_7 = $registro_7 + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##end
+##----------Codigo do município da cooperativa da qual são adquiridas as partes
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($codigoIBGECooperativaSingular, 7)})
+##----------Controle de capital do cooperado
+#**##**##**##if ($mutuario.contaCooperado.cooperado.getClass().getSimpleName().equals("CooperadoEmpresaEntity"))
+#**##**##**##**##set( $registro_7 = $registro_7 + "N" )
+#**##**##**##else
+#**##**##**##**##set( $registro_7 = $registro_7 + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##end
+##----------UF da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($ufCooperativaSingular, 2)})
+##----------Filler (4 espacos)
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco(null, 5)})
+##----------CNPJ da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($cnpjCooperativaSingular, 14)})
+##----------Data da primeira carencia
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco(null, 8)})
+##----------Periodicidade de pagamento dos juros na carencia
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero(null, 2)})
+##----------Nome da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($nomeCooperativaSingular, 18)})
+##----------Endereco da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($enderecoCooperativaSingular, 30)})
+##----------Bairro da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($bairroCooperativaSingular, 15)})
+##----------Inicio CEP da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($cepCooperativaSingular, 5)})
+##----------Complemento CEP cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($complementoCepCooperativaSingular, 3)})
+##----------Data de abertura da cooperativa
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComData($dataAberturaCooperativaSingular, "yyyyMMdd")})
+##----------Patrimonio de referencia (PR)
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($patrimonioReferenciaCooperativaSingular, 17)})
+##----------Tipo Logradouro (fixo 44)
+#**##**##**##set($registro_7 = $registro_7 + "44")
+##----------Logradouro
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($logradouroCooperativaSingular, 60)})
+##----------Filler de 4
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco(null, 4)})
+##----------Numero
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComZero($numeroEnderecoCooperativaSingular, 6)})
+##----------Complemento
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco($complementoCooperativaSingular, 20)})
+##----------Filler de 339
+#**##**##**##set($registro_7 = $registro_7 + ${formatador.preencherComEspaco(null, 339)})
+##----------Numero sequencial
+#**##**##**##set( $registro_7 = $registro_7 + ${formatador.preencherComZero($linha, 5)})
+##----------Imprime o registro 7
+#**##**##**#$registro_7
+#**##**##end
+#**##**###----------- Registro Tipo D ---------------------------------------------------------------------------------------------------------
+#**##**##if ($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.glebas && !($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.glebas.isEmpty()))
+#**##**##**##set( $SeqGleba = 0)
+#**##**##**##set( $pontoZero = "A")
+#**##**##**##foreach($gleba in $proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.glebas)
+#**##**##**##**##set( $SeqGleba = $SeqGleba + 1)
+#**##**##**##**###---- Regra para Enviar apenas uma coordenada quando area < 5ha
+#**##**##**##**##foreach($pontogleba in $gleba.pontos)
+#**##**##**##**##**###-- Trecho comentado devido a nao aceitacao do BRDE para apenas 1 ponto quando menor 5ha. 19/03/2021
+#**##**##**##**##**###if( $gleba.area <=5)
+#**##**##**##**##**###if( $foreach.count == 2 )
+#**##**##**##**##**###break
+#**##**##**##**##**###end
+#**##**##**##**##**###end
+#**##**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##**##set( $registro_d = "D")
+#**##**##**##**##**##set( $registro_d = $registro_d + $cnpjCentral)
+#**##**##**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##**##**##set( $registro_d = $registro_d + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($SeqGleba, 4)})
+#**##**##**##**##**##set( $registro_d = $registro_d + "M")
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero(null, 9)})
+#**##**##**##**##**##set( $pontoOrdem = $pontogleba.ordem)
+#**##**##**##**##**###---- Adicionado Validacao para o valor do campo Ordem, pois o BRDE nao aceita ZERO e o sistema tem pontos com este valor
+#**##**##**##**##**##if ($pontogleba.ordem == 0)
+#**##**##**##**##**##**##set( $pontoZero = "Z")
+#**##**##**##**##**##end
+#**##**##**##**##**##if ($pontoZero == "Z")
+#**##**##**##**##**##**##set( $pontoOrdem = $pontoOrdem + 1)
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($pontoOrdem, 4)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**###---- Latitude/Longitude - O valor latitude e logitude são numericos com casas decimais, sendo necessário inserir um caracter para transformar em alfanumero e tratar os dados
+#**##**##**##**##**##set( $latitude = $pontogleba.latitude * -1)
+#**##**##**##**##**##set( $latitude = $latitude.toString())
+#**##**##**##**##**##set( $latitude = $latitude.replace(".",""))
+#**##**##**##**##**###---- Latitude/Longitude - Inserido espaco para substituir por zero, assim ficando zeros a direita
+#**##**##**##**##**##set( $latitude = ${formatador.preencherComEspaco($latitude, 8)})
+#**##**##**##**##**##set( $latitude = $latitude.replace(" ","0"))
+#**##**##**##**##**##set( $registro_d = $registro_d + $latitude)
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**##set( $longitude = $pontogleba.longitude * -1)
+#**##**##**##**##**##set( $longitude = $longitude.toString())
+#**##**##**##**##**##set( $longitude = $longitude.replace(".",""))
+#**##**##**##**##**##set( $longitude = ${formatador.preencherComEspaco($longitude, 8)})
+#**##**##**##**##**##set( $longitude = $longitude.replace(" ","0"))
+#**##**##**##**##**##set( $registro_d = $registro_d + $longitude)
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**###---- Altitude - Validacao valor do campo
+#**##**##**##**##**##set( $altitude = $pontogleba.altitude)
+#**##**##**##**##**##set( $altitude = $altitude.toString())
+#**##**##**##**##**##set( $thAltp = $altitude.indexOf("."))
+#**##**##**##**##**##if($thAltp == 6)
+#**##**##**##**##**##**##set( $thAltp = $thAltp - 2)
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $gAltitude = $altitude.substring(0,$thAltp))
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($gAltitude, 4)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.cidade.codigoBacen, 6)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComEspaco(null, 513)})
+#**##**##**##**##**##set( $registro_d = $registro_d + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**##**###Imprimi Registro Tipo D
+#**##**##**##**##**#$registro_d
+#**##**##**##**##end
+#**##**##**##end
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo F ---------------------------------------------------------------------------------------------------------
+#**##**###---- Percorre lista de campos adicionais Referente a Registro F
+#**##**##foreach( $valorCampoAdicional in $proposta.empreendimentosProposta.get(0).valoresCamposAdicionais)
+#**##**##**###------- 'Data Validade ITR Imóvel do Projeto'
+#**##**##**##if ( $valorCampoAdicional.campoAdicional.idBndesBrde == 801)
+#**##**##**##**##set( $DatValITR = $valorCampoAdicional.valorData)
+#**##**##**##end
+#**##**##end
+#**##**##set( $linha = $linha + 1)
+#**##**##set( $registro_f = "F")
+#**##**##set( $registro_f = $registro_f + $cnpjCentral)
+#**##**###---- Verifica tipo de pessoa
+#**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##set( $registro_f = $registro_f + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##else
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##end
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco(null, 1)})
+#**##**##set( $registro_f = $registro_f + "44")
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.logradouro, 60).toUpperCase()})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco(null, 4)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.numero, 6)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.complemento, 20).toUpperCase()})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.bairro, 16).toUpperCase()})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.cep.replace("-",""), 8)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero(0, 7)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco(null, 6)})
+#**##**###
+#**##**###---- Percentual Principal Garantia e Tipo de Garantia -----------------------
+#**##**##foreach( $BemGarantia in $proposta.bens)
+#**##**##**##set( $VlrGarantia = $BemGarantia.valor)
+#**##**##**##set( $TipoGarantia = $BemGarantia.garantia.codigoBacen)
+#**##**##end
+#**##**##foreach( $BemGarantia in $proposta.bens)
+#**##**##**##if($BemGarantia.valor > $VlrGarantia)
+#**##**##**##**##set( $VlrGarantia = $BemGarantia.valor)
+#**##**##**##**##set( $TipoGarantia = $BemGarantia.garantia.codigoBacen)
+#**##**##**##end
+#**##**##end
+#**##**##if($VlrGarantia !=0)
+#**##**##**##set( $PercPropGarta = ($VlrGarantia / $proposta.valorEmprestimo)*100)
+#**##**##elseif( $VlrGarantia == 0)
+#**##**##**##set( $PercPropGarta = 0.0)
+#**##**##end
+#**##**##set( $PercGarantia = $PercPropGarta)
+#**##**##set( $PercGarantia = $PercGarantia.toString())
+#**##**##set( $thPG = $PercGarantia.length())
+#**##**##set( $thPercG = $PercGarantia.indexOf("."))
+#**##**##set( $tho = $thPG - $thPercG)
+#**##**##if( $tho == 2)
+#**##**##**##set( $PercGarantia = $PercGarantia + '0')
+#**##**##elseif( $tho > 2)
+#**##**##**##set( $thPercG = $thPercG + 3)
+#**##**##**##set( $PercGarantia = $PercGarantia.substring(0,$thPercG))
+#**##**##end
+#**##**##set( $PercGarantia = $PercGarantia.replace(".",""))
+#**##**###
+#**##**###-------- Valida a principal garantia vinculada ao contrato ------- GIPS 24831 -----------------
+#**##**###--- Hipoteca
+#**##**##if ($TipoGarantia == 562 || $TipoGarantia == 564)
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero(09, 2)})
+#**##**##**###--- Alienacoes
+#**##**##elseif($TipoGarantia == 423 || $TipoGarantia == 424 || $TipoGarantia == 427)
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero(04, 2)})
+#**##**##**###--- Penhor
+#**##**##elseif($TipoGarantia == 323 || $TipoGarantia == 399)
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero(13, 2)})
+#**##**##else
+#**##**##**##set( $registro_f = $registro_f + 99)
+#**##**##end
+#**##**##if($PercGarantia != 0.00)
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($PercGarantia, 5)})
+#**##**##else
+#**##**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero(null, 5)})
+#**##**##end
+#**##**##set( $DataValidadeITR = ${formatador.preencherComData($DatValITR, "yyyyMMdd")})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($DataValidadeITR, 8)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComEspaco(null, 421)})
+#**##**##set( $registro_f = $registro_f + ${formatador.preencherComZero($linha, 5)})
+#**##**###
+#**##**### Imprime o registro F
+#**##**#$registro_f
+#**##**###
+#**##**###----------- Registro Tipo G ---------------------------------------------------------------------------------------------------------
+#**##**##foreach ($proprietario in $proposta.empreendimentosProposta.get(0).enderecoEmpreendimento.proprietarios)
+#**##**##**##if ($proprietario.registrosCar && !($proprietario.registrosCar.isEmpty()))
+#**##**##**##**##foreach ($registroCar in $proprietario.registrosCar)
+#**##**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##**##set( $registro_g = "G")
+#**##**##**##**##**##set( $registro_g = $registro_g + $cnpjCentral)
+#**##**##**##**##**### Verifica tipo de pessoa
+#**##**##**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##**##**##set( $registro_g = $registro_g + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComZero($proprietario.cpfCnpj.replace(".","").replace("-","").replace("/",""), 14)})
+#**##**##**##**##**##if( $proprietario.cpfCnpj.length() <= 14)
+#**##**##**##**##**##**##set( $registro_g = $registro_g + "F")
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_g = $registro_g + "J")
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComEspaco(null, 2)})
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComEspaco($registroCar.numeroCar.toUpperCase(), 41)})
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComEspaco(null, 506)})
+#**##**##**##**##**##set( $registro_g = $registro_g + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**##**###Imprime o registro g
+#**##**##**##**##**#$registro_g
+#**##**##**##**##end
+#**##**##**##end
+#**##**##end
+#**##**###
+#**##**###----------- Registro Tipo O ---------------------------------------------------------------------------------------------------------
+#**##**##if ($mutuario.contaCooperado.cooperado.cnpj && !($proposta.modelo.leiauteLinhaCredito.linhaCredito.tipo.getTipoEmprestimo() == "S"))
+#**##**##**##if ($mutuario.valoresCamposAdicionais && !($mutuario.valoresCamposAdicionais.isEmpty()))
+#**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##set( $registro_o = "O")
+#**##**##**##**##set( $registro_o = $registro_o + $cnpjCentral)
+#**##**##**##**###--- Campos adicional mutuarios
+#**##**##**##**##foreach( $valorCampoAdicional in $mutuario.valoresCamposAdicionais)
+#**##**##**##**##**##if ( $valorCampoAdicional.campoAdicional.idBndesBrde == 901)
+#**##**##**##**##**##**##set( $MuCpfCnpjPessoaObrigatorio = $valorCampoAdicional.valorInteiro)
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 902)
+#**##**##**##**##**##**##set( $MuNomePessoaObrigatorio = $valorCampoAdicional.valorTexto.toUpperCase())
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 903)
+#**##**##**##**##**##**##set( $MuParticipacaoCapSocialObrigatorio = $valorCampoAdicional.valorMonetario)
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 904)
+#**##**##**##**##**##**##set( $MuDataInicioVinculoObrigatorio = $valorCampoAdicional.valorData)
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 905)
+#**##**##**##**##**##**##set( $MuCpfCnpjPessoaOpcional = $valorCampoAdicional.valorInteiro)
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 906)
+#**##**##**##**##**##**##set( $MuNomePessoaOpcional = $valorCampoAdicional.valorTexto.toUpperCase())
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 907)
+#**##**##**##**##**##**##set( $MuParticipacaoCapSocialOpcional = $valorCampoAdicional.valorMonetario)
+#**##**##**##**##**##elseif ( $valorCampoAdicional.campoAdicional.idBndesBrde == 908)
+#**##**##**##**##**##**##set( $MuDataInicioVinculoOpcional = $valorCampoAdicional.valorData)
+#**##**##**##**##**##end
+#**##**##**##**##end
+#**##**##**##**### Verifica tipo de pessoa
+#**##**##**##**##set ( $MuTipoPessoa = 30)
+#**##**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##**##set( $registro_o = $registro_o + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##set ($MuCpfCnpjObrigatorio = $MuCpfCnpjPessoaObrigatorio.toString())
+#**##**##**##**##if( $MuCpfCnpjObrigatorio.length() < 14)
+#**##**##**##**##**##set( $registro_o = $registro_o + "1")
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_o = $registro_o + "2")
+#**##**##**##**##end
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- CPF/CNPJ da Pessoa Ligada Obrigatório
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComZero($MuCpfCnpjPessoaObrigatorio, 14)})
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Nome da Pessoa Ligada
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco($MuNomePessoaObrigatorio, 40).toUpperCase()})
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 226)})
+#**##**##**##**###--------------------- Nível de Participação no Capital Social
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComZero($helper.ajustarPrecisaoPorcentagemParticipacaoSocial($MuParticipacaoCapSocialObrigatorio), 5)})
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Tipo de Pessoa Ligada
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco($MuTipoPessoa, 2)})
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**###--------------------- Data de início do vínculo
+#**##**##**##**##if($MuDataInicioVinculoObrigatorio && $MuDataInicioVinculoObrigatorio != "")
+#**##**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComData($MuDataInicioVinculoObrigatorio, "yyyyMMdd")})
+#**##**##**##**##else
+#**##**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComZero(null, 8)})
+#**##**##**##**##end
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComEspaco(null, 265)})
+#**##**##**##**##set( $registro_o = $registro_o + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**###--------------------- CPF/CNPJ da Pessoa Ligada Opcional
+#**##**##**##**##if ($MuCpfCnpjPessoaOpcional)
+#**##**##**##**##**##set( $linha = $linha + 1)
+#**##**##**##**##**##set( $registro_o_opcional = "O")
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + $cnpjCentral)
+#**##**##**##**##**##if ($mutuario.contaCooperado.cooperado.cnpj)
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${mutuario.contaCooperado.cooperado.cnpj.replace(".","").replace("-","").replace("/","")})
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComZero($mutuario.contaCooperado.cooperado.cpf.replace(".","").replace("-",""), 14)})
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**##set ($MuCpfCnpjOpcional = $MuCpfCnpjPessoaOpcional.toString())
+#**##**##**##**##**##if( $MuCpfCnpjOpcional.length() < 14)
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + "1")
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + "2")
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComZero($MuCpfCnpjPessoaOpcional, 14)})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**###--------------------- Nome da Pessoa Ligada
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco($MuNomePessoaOpcional, 40).toUpperCase()})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 226)})
+#**##**##**##**##**###--------------------- Nível de Participação no Capital Social
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComZero($helper.ajustarPrecisaoPorcentagemParticipacaoSocial($MuParticipacaoCapSocialOpcional), 5)})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**###--------------------- Tipo de Pessoa Ligada
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco($MuTipoPessoa, 2)})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 1)})
+#**##**##**##**##**###--------------------- Data de início do vínculo
+#**##**##**##**##**##if($MuDataInicioVinculoOpcional && $MuDataInicioVinculoOpcional != "")
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComData($MuDataInicioVinculoOpcional, "yyyyMMdd")})
+#**##**##**##**##**##else
+#**##**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComZero(null, 8)})
+#**##**##**##**##**##end
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComEspaco(null, 265)})
+#**##**##**##**##**##set( $registro_o_opcional = $registro_o_opcional + ${formatador.preencherComZero($linha, 5)})
+#**##**##**##**##end
+#**##**##**##**###Imprime o registro o obrigatório
+#**##**##**##**#$registro_o
+#**##**##**##**###Imprime o registro o opcional
+#**##**##**##**##if($MuCpfCnpjPessoaOpcional)
+#**##**##**##**##**#$registro_o_opcional
+#**##**##**##**##end
+#**##**##**##end
+#**##**##end
+#**##end
+#**###
+#**###
+#**##set($somatoriaPropostas = $somatoriaPropostas + $proposta.valorEmprestimo)
+#end
+#set( $linha = $linha + 1)
+##
+##----------- Registro Trailer ---------------------------------------------------------------------------------------------------------
+#set( $registro_9 = "9")
+#if($lote.propostas)
+#**##set( $registro_9 = $registro_9 + $cnpjCentral)
+#else
+#**##set( $registro_9 = $registro_9 + ${formatador.preencherComZero(0, 14)})
+#end
+#set( $registro_9 = $registro_9 + ${formatador.preencherComZero(${contadorMutuario}, 5)})
+#set( $registro_9 = $registro_9 + ${formatador.preencherComZero(${contadorMutuario}, 5)})
+#set( $registro_9 = $registro_9 + ${formatador.preencherComZero(${somatoriaPropostas}, 19)})
+#set( $registro_9 = $registro_9 + ${formatador.preencherComEspaco(null, 551)})
+#set( $registro_9 = $registro_9 + ${formatador.preencherComZero($linha, 5)})
+## Imprime o registro 9
+$registro_9
